@@ -20,8 +20,8 @@ class Window(QMainWindow):
         self.setWindowTitle("Comic Reader v0.1")
 
         # Top Menu
-        menu = self.menuBar()
-        file = menu.addMenu("File")
+        self.menu = self.menuBar()
+        file = self.menu.addMenu("File")
 
         open = QAction("Open Comic...", self)
         file.addAction(open)
@@ -73,14 +73,16 @@ class Window(QMainWindow):
         # Boop.
         self.image = self.current_comic.images[self.current_comic.current_page]
         self.load_image()
+        self.statusBar().showMessage("Page %i of %i" % (self.current_comic.current_page, self.current_comic.total_pages))
 
     def mouseReleaseEvent(self, event):
-        # TODO: Forward and back, set page boundaries.
-        print(event)
         if self.comic_loaded:
-            self.current_comic.flip_page('next')
-            print(self.current_comic.current_page)
-            self.display_comic()
+            if event.button() == Qt.LeftButton and self.current_comic.current_page > 0:
+                self.current_comic.flip_page('prev')
+                self.display_comic()
+            elif event.button() == Qt.RightButton and self.current_comic.current_page < self.current_comic.total_pages:
+                self.current_comic.flip_page('next')
+                self.display_comic()
 
 
     def cleanup_temp_dirs(self):

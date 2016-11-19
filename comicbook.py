@@ -30,6 +30,7 @@ class ComicBook:
         self.tempdir = tempdir
         self.images = images
         self.current_page = startpage
+        self.total_pages = len(self.images) - 1
 
     def flip_page(self, direction):
         directions = {'next': 1, 'prev': -1}
