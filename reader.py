@@ -31,16 +31,20 @@ class Window(QMainWindow):
 
         file.triggered[QAction].connect(self.process_action)
 
-        # Image display panel
 
     def load_image(self):
-        # TODO: Allow scrolling.
         container = QWidget()
         panel = QLabel(container)
-        self.setCentralWidget(container)
         pixmap = QPixmap(self.image)
-        panel.setPixmap(pixmap.scaledToWidth(self.width()))
+        panel.setPixmap(pixmap.scaledToWidth(self.width() - 20))
         panel.setAlignment(Qt.AlignCenter)
+
+        scroll = QScrollArea()
+        scroll.setWidget(panel)
+        scroll.setWidgetResizable(True)
+
+
+        self.setCentralWidget(scroll)
 
     def resizeEvent(self, resizeEvent):
         self.load_image()
