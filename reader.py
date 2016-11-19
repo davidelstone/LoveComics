@@ -33,9 +33,6 @@ class Window(QMainWindow):
 
         file.triggered[QAction].connect(self.process_action)
 
-
-
-
     def load_image(self):
         container = QWidget()
         panel = QLabel(container)
@@ -48,6 +45,7 @@ class Window(QMainWindow):
         scroll.setWidgetResizable(True)
 
         self.setCentralWidget(scroll)
+        panel.setFocus()
 
     def resizeEvent(self, resizeEvent):
         self.load_image()
@@ -75,7 +73,6 @@ class Window(QMainWindow):
             print("File not supported.")
 
     def display_comic(self):
-        # Boop.
         self.image = self.current_comic.images[self.current_comic.current_page]
         self.load_image()
         self.status.setText("Page %i of %i   " % (self.current_comic.current_page, self.current_comic.total_pages))
@@ -89,10 +86,18 @@ class Window(QMainWindow):
                 self.current_comic.flip_page('next')
                 self.display_comic()
 
+    def keyReleaseEvent(self, event):
+        if self.comic_loaded:
+            if event.key() == Qt.Key_Left and self.current_comic.current_page > 0:
+                self.current_comic.flip_page('prev')
+                self.display_comic()
+            elif event.key() == Qt.Key_Right and self.current_comic.current_page < self.current_comic.total_pages:
+                self.current_comic.flip_page('next')
+                self.display_comic()
 
     def cleanup_temp_dirs(self):
-        for dir in self.temp_dirs:
-            dir.cleanup()
+        for tmp_dir in self.temp_dirs:
+            tmp_dir.cleanup()
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
