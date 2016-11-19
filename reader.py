@@ -8,14 +8,15 @@ class Window(QMainWindow):
     def __init__(self):
         super().__init__()
         self.init_UI()
-        self.image = 'C:\\Users\\David\\Documents\\Projects\\Comic Reader\\img\\chew.jpg'
+        self.image = 'C:\\Users\\David\\Documents\\Projects\\Comic Reader\\img\\splash.png'
         self.temp_dirs = []
         self.comic_loaded = False
         self.current_comic = object()
 
     def init_UI(self):
         self.resize(550, 700)
-        self.setWindowTitle("LoveComix")
+        self.setWindowTitle('LoveComics')
+        self.setWindowIcon(QIcon('C:\\Users\\David\\Documents\\Projects\\Comic Reader\\img\\LCIcon.png'))
 
         # Top Menu
         menu = self.menuBar()
