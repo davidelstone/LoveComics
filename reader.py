@@ -1,4 +1,3 @@
-import sys
 import atexit
 from comicbook import *
 from PyQt5.QtCore import *
@@ -15,13 +14,12 @@ class Window(QMainWindow):
         self.current_comic = object()
 
     def init_UI(self):
-        self.statusBar().showMessage("Ready")
-        self.resize(300, 300)
-        self.setWindowTitle("Comic Reader v0.1")
+        self.resize(550, 700)
+        self.setWindowTitle("LoveComix")
 
         # Top Menu
-        self.menu = self.menuBar()
-        file = self.menu.addMenu("File")
+        menu = self.menuBar()
+        file = menu.addMenu("File")
 
         open = QAction("Open Comic...", self)
         file.addAction(open)
@@ -29,20 +27,24 @@ class Window(QMainWindow):
         exit = QAction("Exit", self)
         file.addAction(exit)
 
+        self.status = QLabel("Ready   ")
+        self.statusBar().addPermanentWidget(self.status)
+
         file.triggered[QAction].connect(self.process_action)
+
+
 
 
     def load_image(self):
         container = QWidget()
         panel = QLabel(container)
         pixmap = QPixmap(self.image)
-        panel.setPixmap(pixmap.scaledToWidth(self.width() - 20))
+        panel.setPixmap(pixmap.scaledToWidth(self.width() - 20, Qt.SmoothTransformation))
         panel.setAlignment(Qt.AlignCenter)
 
         scroll = QScrollArea()
         scroll.setWidget(panel)
         scroll.setWidgetResizable(True)
-
 
         self.setCentralWidget(scroll)
 
@@ -63,13 +65,11 @@ class Window(QMainWindow):
         filename = QFileDialog.getOpenFileName(self, 'Open File', 'c:\\', "Comic book files (*.cbr *.cbz)")
         cbf = ComicBookFile(filename[0])
 
-        if cbf.type.lower() == "cbr":
+        if cbf.type.lower() in ("cbr", "cbz"):
             self.current_comic = cbf.unrar()
             self.comic_loaded = True
             self.temp_dirs.append(self.current_comic.tempdir)
             self.display_comic()
-        elif cbf.type.lower() == "cbz":
-            cbf.unzip()
         else:
             print("File not supported.")
 
@@ -77,7 +77,7 @@ class Window(QMainWindow):
         # Boop.
         self.image = self.current_comic.images[self.current_comic.current_page]
         self.load_image()
-        self.statusBar().showMessage("Page %i of %i" % (self.current_comic.current_page, self.current_comic.total_pages))
+        self.status.setText("Page %i of %i   " % (self.current_comic.current_page, self.current_comic.total_pages))
 
     def mouseReleaseEvent(self, event):
         if self.comic_loaded:
