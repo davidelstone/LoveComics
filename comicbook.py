@@ -22,7 +22,6 @@ class ComicBookFile:
              for name in files:
                  if name.split('.')[-1].lower() == 'jpg':
                      self.images.append(os.path.join(path, name))
-         print(self.images)
          return ComicBook(dir, self.images)
 
 class ComicBook:
