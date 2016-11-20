@@ -28,7 +28,7 @@ class Window(QMainWindow):
         exit = QAction("Exit", self)
         file.addAction(exit)
 
-        self.status = QLabel("Ready   ")
+        self.status = QLabel("")
         self.statusBar().addPermanentWidget(self.status)
 
         file.triggered[QAction].connect(self.process_action)
@@ -58,19 +58,21 @@ class Window(QMainWindow):
         try:
             options[act.text()]()  # Run selected menu option
         except KeyError as e:
-            print("Error - " + e)
+            self.statusBar().showMessage("Error - " + e)
 
     def open_file(self):
         filename = QFileDialog.getOpenFileName(self, 'Open File', 'c:\\', "Comic book files (*.cbr *.cbz)")
         cbf = ComicBookFile(filename[0])
 
         if cbf.type.lower() in ("cbr", "cbz"):
+            self.statusBar().showMessage("Loading %s " % cbf.path)
             self.current_comic = cbf.unrar()
             self.comic_loaded = True
             self.temp_dirs.append(self.current_comic.tempdir)
+            self.statusBar().clearMessage()
             self.display_comic()
         else:
-            print("File not supported.")
+            self.statusBar().showMessage("File not supported.", 20)
 
     def display_comic(self):
         self.image = self.current_comic.images[self.current_comic.current_page]
